@@ -1,5 +1,5 @@
 config
-*/__pycache__
+*.pyc
 /data
 /results
 pyproject.toml
