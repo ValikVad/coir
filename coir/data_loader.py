@@ -100,3 +100,54 @@ def get_tasks(tasks: list):
                 all_tasks[task] = task_data
 
     return all_tasks
+
+def check(fIn: str, ext: str):
+    if not os.path.exists(fIn):
+        raise ValueError("File {} not present! Please provide accurate file.".format(fIn))
+    
+    if not fIn.endswith(ext):
+        raise ValueError("File {} must be present with extension {}".format(fIn, ext))
+    
+def load_from_csv(self, csv_file: str) -> Tuple[Dict[str, Dict[str, str]], Dict[str, str], Dict[str, Dict[str, int]]]:
+    """
+    Load data from a provided CSV file.
+    The CSV file should have columns: corpus_id, title, text, query_id, query_text, score
+    
+    :param csv_file: Path to the CSV file
+    :return: Tuple of (corpus, queries, qrels)
+    """
+    check(fIn=csv_file, ext="csv")
+    
+    corpus = {}
+    queries = {}
+    qrels = {}
+    with open(csv_file, encoding='utf8') as fIn:
+        reader = csv.DictReader(fIn)
+        for row in tqdm(reader, desc="Loading data from CSV"):
+            corpus_id = row['corpus_id']
+            title = row['title']
+            text = row['text']
+            query_id = row['query_id']
+            query_text = row['query_text']
+            score = int(row['score'])
+
+            # Load corpus
+            if corpus_id not in corpus:
+                corpus[corpus_id] = {"title": title, "text": text}
+
+            # Load queries
+            if query_id not in queries:
+                queries[query_id] = query_text
+
+            # Load qrels
+            if query_id not in qrels:
+                qrels[query_id] = {corpus_id: score}
+            else:
+                qrels[query_id][corpus_id] = score
+
+    logger.info("Loaded %d Documents.", len(corpus))
+    logger.info("Doc Example: %s", list(corpus.values())[0])
+    logger.info("Loaded %d Queries.", len(queries))
+    logger.info("Query Example: %s", list(queries.values())[0])
+
+    return corpus, queries, qrels

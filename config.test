@@ -1,0 +1,8 @@
+model1_url = http://example.com/model1
+model1_key = your_api_key_for_model1
+
+model2_url = http://example.com/model2
+model2_key = your_api_key_for_model2
+
+model3_url = http://example.com/model3
+model3_key = your_api_key_for_model3
